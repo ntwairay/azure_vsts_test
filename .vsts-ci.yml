@@ -9,7 +9,7 @@ phases:
     - task: AzureFileCopy@1
       displayName: Upload Templates
       inputs:
-        SourcePath: 'create_subnet_net'
+        SourcePath: 'templates'
         azureSubscription: 'ntwairay'
         Destination: 'AzureBlob'
         storage: 'ntwairaytemplate'
@@ -21,3 +21,39 @@ phases:
     - powershell: Write-Host "##vso[task.setvariable variable=TemplateContainerToken;isSecret=false;isOutput=true;]$Env:TemplateContainerToken"
     - powershell: Write-Host "The value of Token is $Env:TemplateContainerToken"
     - powershell: Write-Host "The value of URi is $Env:TemplateContainerUri"
+
+  - phase: test_deployment
+    variables:
+      TemplateContainerUri: $[ dependencies.upload_templates.outputs['powershell1.TemplateContainerUri'] ]
+      TemplateContainerToken: $[ dependencies.upload_templates.outputs['powershell2.TemplateContainerToken'] ]
+    dependsOn: upload_templates
+    displayName: Test template deployments
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    queue:
+      name: Hosted VS2017
+      demands: DotNetFramework
+      parallel: 2
+      matrix:
+        vnet:
+          templateName: vnet
+    steps:
+    - task: PowerShell@2
+      displayName: Check for changes to $(templateName)
+      inputs:
+        targetType: inline
+        script: |
+          git diff-tree --no-commit-id --name-only -r $Env:Build_SourceVersion | foreach {
+            if($_.Contains($Env:templateName))
+            {
+              Write-Host "##vso[task.setvariable variable=fileChanged]true"
+            }
+          }
+    - task: AzureResourceGroupDeployment@2
+      displayName: Deploy resource group template
+      inputs:
+        action: 'Create Or Update Resource Group'
+        azureSubscription: 'ntwairay'
+        resourceGroupName: '$(Build.BuildNumber)-$(templateName)'
+        location: 'australiaeast'
+        csmFile: '$(Build.SourcesDirectory)/templates/$(templateName/azuredeploy.json'
+      condition: or(eq(variables['fileChanged'], 'true'), variables['System.Debug'])
