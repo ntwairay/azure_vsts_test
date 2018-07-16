@@ -55,5 +55,5 @@ phases:
         azureSubscription: 'ntwairay'
         resourceGroupName: '$(Build.BuildNumber)-$(templateName)'
         location: 'australiaeast'
-        csmFile: '$(Build.SourcesDirectory)/templates/$(templateName/azuredeploy.json'
+        csmFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.json'
       condition: or(eq(variables['fileChanged'], 'true'), variables['System.Debug'])
