@@ -56,4 +56,13 @@ phases:
         resourceGroupName: '$(Build.BuildNumber)-$(templateName)'
         location: 'australiaeast'
         csmFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.json'
+        csmParametersFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.parameters.json'
+        overrideParameters: '-artifactsLocation $(TemplateContainerUri) -templateVersion "$(Build.BuildNumber)" -artifactsLocationSasToken $(TemplateContainerToken) -prefixDeploy true'
       condition: or(eq(variables['fileChanged'], 'true'), variables['System.Debug'])
+    - task: AzureCLI@1
+      displayName: Delete resource group - don't wait
+      inputs:
+        azureSubscription: 'Shared Services (0a040517-883f-4f73-a98e-14a3eb47c909)'
+        scriptLocation: inlineScript
+        inlineScript: az group delete --name $(Build.BuildNumber)-$(templateName) --no-wait --yes
+      condition: and(eq(variables['fileChanged'], 'true'), not(variables['System.Debug']))
