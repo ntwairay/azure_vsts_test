@@ -19,3 +19,5 @@ phases:
         outputStorageContainerSasToken: 'TemplateContainerToken'
     - powershell: Write-Host "##vso[task.setvariable variable=TemplateContainerUri;isSecret=false;isOutput=true;]$Env:TemplateContainerUri"
     - powershell: Write-Host "##vso[task.setvariable variable=TemplateContainerToken;isSecret=false;isOutput=true;]$Env:TemplateContainerToken"
+    - powershell: Write-Host "The value of Token is $Env:TemplateContainerToken"
+    - powershell: Write-Host "The value of URi is $Env:TemplateContainerUri"
