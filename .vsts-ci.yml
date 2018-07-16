@@ -57,5 +57,4 @@ phases:
         location: 'australiaeast'
         csmFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.json'
         csmParametersFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.parameters.json'
-        overrideParameters: '-artifactsLocation $(TemplateContainerUri) -templateVersion "$(Build.BuildNumber)" -artifactsLocationSasToken $(TemplateContainerToken) -prefixDeploy true'
       condition: or(eq(variables['fileChanged'], 'true'), variables['System.Debug'])
