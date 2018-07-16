@@ -1,0 +1,21 @@
+- phase: upload_templates
+  dependsOn: linting_tests
+  displayName: Upload templates to storage
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  queue:
+    name: Hosted VS2017
+    demands: DotNetFramework
+  steps:
+  - task: AzureFileCopy@1
+    displayName: Upload Templates
+    inputs:
+      SourcePath: 'create_subnet_net'
+      azureSubscription: 'ntwairay'
+      Destination: 'AzureBlob'
+      storage: 'ntwairaytemplate'
+      ContainerName: 'Testing'
+      BlobPrefix: '$(Build.BuildNumber)\'
+      outputStorageUri: 'TemplateContainerUri'
+      outputStorageContainerSasToken: 'TemplateContainerToken'
+  - powershell: Write-Host "##vso[task.setvariable variable=TemplateContainerUri;isSecret=false;isOutput=true;]$Env:TemplateContainerUri"
+  - powershell: Write-Host "##vso[task.setvariable variable=TemplateContainerToken;isSecret=false;isOutput=true;]$Env:TemplateContainerToken"
