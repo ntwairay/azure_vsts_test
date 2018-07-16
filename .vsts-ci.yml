@@ -56,5 +56,4 @@ phases:
         resourceGroupName: '$(Build.BuildNumber)-$(templateName)'
         location: 'australiaeast'
         csmFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.json'
-        csmParametersFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.parameters.json'
       condition: or(eq(variables['fileChanged'], 'true'), variables['System.Debug'])
