@@ -41,7 +41,7 @@ if (($subscriptionName -eq "") -or ($cloudwiseAppServiceURL -eq ""))
 
 ### 1. Login to Azure Resource Manager and save the profile locally to avoid relogins (used primarily for debugging purposes)
 #############################################################################################
-Write-Host ("Step 1: Logging in to Azure Subscription"+ $subscriptionName) -ForegroundColor Gray
+Write-Host ("Step 1: Logging in to Azure Subscription "+ $subscriptionName) -ForegroundColor Gray
 
 # To login to Azure Resource Manager
 if(![System.IO.File]::Exists($servicePrincipalPath)){
