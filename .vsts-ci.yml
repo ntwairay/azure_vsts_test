@@ -57,3 +57,7 @@ phases:
         location: 'australiaeast'
         csmFile: '$(Build.SourcesDirectory)/templates/$(templateName)/azuredeploy.json'
       condition: or(eq(variables['fileChanged'], 'true'), variables['System.Debug'])
+    - task: PowerShell@2
+      displayName: create app registeration
+      inputs:
+        filePath: '$(Build.SourcesDirectory)/templates/appRegisteration/azure-governance-operations-automation.ps1'
